@@ -6,12 +6,18 @@ import { IResolvers } from 'graphql-tools/dist/Interfaces'
 import * as schema from  './schema.graphql'
 
 export interface Query {
-    accounts: <T = Array<Account>>(args: { offset?: Int | null, limit?: Int | null, where?: AccountWhereInput | null, orderBy?: Array<AccountOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    accountByUniqueInput: <T = Account | null>(args: { where: AccountWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    accountsConnection: <T = AccountConnection>(args: { first?: Int | null, after?: String | null, last?: Int | null, before?: String | null, where?: AccountWhereInput | null, orderBy?: Array<AccountOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    historicalBalances: <T = Array<HistoricalBalance>>(args: { offset?: Int | null, limit?: Int | null, where?: HistoricalBalanceWhereInput | null, orderBy?: Array<HistoricalBalanceOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    historicalBalanceByUniqueInput: <T = HistoricalBalance | null>(args: { where: HistoricalBalanceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    historicalBalancesConnection: <T = HistoricalBalanceConnection>(args: { first?: Int | null, after?: String | null, last?: Int | null, before?: String | null, where?: HistoricalBalanceWhereInput | null, orderBy?: Array<HistoricalBalanceOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    noBondRecordAccounts: <T = Array<NoBondRecordAccount>>(args: { offset?: Int | null, limit?: Int | null, where?: NoBondRecordAccountWhereInput | null, orderBy?: Array<NoBondRecordAccountOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    noBondRecordAccountByUniqueInput: <T = NoBondRecordAccount | null>(args: { where: NoBondRecordAccountWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    noBondRecordAccountsConnection: <T = NoBondRecordAccountConnection>(args: { first?: Int | null, after?: String | null, last?: Int | null, before?: String | null, where?: NoBondRecordAccountWhereInput | null, orderBy?: Array<NoBondRecordAccountOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    stakingRewards: <T = Array<StakingReward>>(args: { offset?: Int | null, limit?: Int | null, where?: StakingRewardWhereInput | null, orderBy?: Array<StakingRewardOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    stakingRewardByUniqueInput: <T = StakingReward | null>(args: { where: StakingRewardWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    stakingRewardsConnection: <T = StakingRewardConnection>(args: { first?: Int | null, after?: String | null, last?: Int | null, before?: String | null, where?: StakingRewardWhereInput | null, orderBy?: Array<StakingRewardOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    stakingSlashes: <T = Array<StakingSlash>>(args: { offset?: Int | null, limit?: Int | null, where?: StakingSlashWhereInput | null, orderBy?: Array<StakingSlashOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    stakingSlashByUniqueInput: <T = StakingSlash | null>(args: { where: StakingSlashWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    stakingSlashesConnection: <T = StakingSlashConnection>(args: { first?: Int | null, after?: String | null, last?: Int | null, before?: String | null, where?: StakingSlashWhereInput | null, orderBy?: Array<StakingSlashOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    sumRewards: <T = Array<SumReward>>(args: { offset?: Int | null, limit?: Int | null, where?: SumRewardWhereInput | null, orderBy?: Array<SumRewardOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    sumRewardByUniqueInput: <T = SumReward | null>(args: { where: SumRewardWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    sumRewardsConnection: <T = SumRewardConnection>(args: { first?: Int | null, after?: String | null, last?: Int | null, before?: String | null, where?: SumRewardWhereInput | null, orderBy?: Array<SumRewardOrderByInput> | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     hello: <T = Hello>(args?: {}, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
   }
 
@@ -45,18 +51,16 @@ export const Binding = makeBindingClass<BindingConstructor<Binding>>({ schema: s
  * Types
 */
 
-export type AccountOrderByInput =   'createdAt_ASC' |
+export type NoBondRecordAccountOrderByInput =   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC' |
   'deletedAt_ASC' |
   'deletedAt_DESC' |
-  'wallet_ASC' |
-  'wallet_DESC' |
-  'balance_ASC' |
-  'balance_DESC'
+  'firstRewardAt_ASC' |
+  'firstRewardAt_DESC'
 
-export type HistoricalBalanceOrderByInput =   'createdAt_ASC' |
+export type StakingRewardOrderByInput =   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC' |
@@ -66,65 +70,34 @@ export type HistoricalBalanceOrderByInput =   'createdAt_ASC' |
   'account_DESC' |
   'balance_ASC' |
   'balance_DESC' |
-  'timestamp_ASC' |
-  'timestamp_DESC'
+  'date_ASC' |
+  'date_DESC'
 
-export interface AccountCreateInput {
-  wallet: String
-  balance: String
-}
+export type StakingSlashOrderByInput =   'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC' |
+  'deletedAt_ASC' |
+  'deletedAt_DESC' |
+  'account_ASC' |
+  'account_DESC' |
+  'balance_ASC' |
+  'balance_DESC' |
+  'date_ASC' |
+  'date_DESC'
 
-export interface AccountUpdateInput {
-  wallet?: String | null
-  balance?: String | null
-}
-
-export interface AccountWhereInput {
-  id_eq?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  createdAt_eq?: DateTime | null
-  createdAt_lt?: DateTime | null
-  createdAt_lte?: DateTime | null
-  createdAt_gt?: DateTime | null
-  createdAt_gte?: DateTime | null
-  createdById_eq?: ID_Input | null
-  createdById_in?: ID_Output[] | ID_Output | null
-  updatedAt_eq?: DateTime | null
-  updatedAt_lt?: DateTime | null
-  updatedAt_lte?: DateTime | null
-  updatedAt_gt?: DateTime | null
-  updatedAt_gte?: DateTime | null
-  updatedById_eq?: ID_Input | null
-  updatedById_in?: ID_Output[] | ID_Output | null
-  deletedAt_all?: Boolean | null
-  deletedAt_eq?: DateTime | null
-  deletedAt_lt?: DateTime | null
-  deletedAt_lte?: DateTime | null
-  deletedAt_gt?: DateTime | null
-  deletedAt_gte?: DateTime | null
-  deletedById_eq?: ID_Input | null
-  deletedById_in?: ID_Output[] | ID_Output | null
-  wallet_eq?: String | null
-  wallet_contains?: String | null
-  wallet_startsWith?: String | null
-  wallet_endsWith?: String | null
-  wallet_in?: String[] | String | null
-  balance_eq?: BigInt | null
-  balance_gt?: BigInt | null
-  balance_gte?: BigInt | null
-  balance_lt?: BigInt | null
-  balance_lte?: BigInt | null
-  balance_in?: BigInt[] | BigInt | null
-  historicalBalances_none?: HistoricalBalanceWhereInput | null
-  historicalBalances_some?: HistoricalBalanceWhereInput | null
-  historicalBalances_every?: HistoricalBalanceWhereInput | null
-  AND?: AccountWhereInput[] | AccountWhereInput | null
-  OR?: AccountWhereInput[] | AccountWhereInput | null
-}
-
-export interface AccountWhereUniqueInput {
-  id: ID_Output
-}
+export type SumRewardOrderByInput =   'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC' |
+  'deletedAt_ASC' |
+  'deletedAt_DESC' |
+  'accountReward_ASC' |
+  'accountReward_DESC' |
+  'accountSlash_ASC' |
+  'accountSlash_DESC' |
+  'accountTotal_ASC' |
+  'accountTotal_DESC'
 
 export interface BaseWhereInput {
   id_eq?: String | null
@@ -150,19 +123,66 @@ export interface BaseWhereInput {
   deletedById_eq?: String | null
 }
 
-export interface HistoricalBalanceCreateInput {
+export interface NoBondRecordAccountCreateInput {
+  firstRewardAt: Float
+}
+
+export interface NoBondRecordAccountUpdateInput {
+  firstRewardAt?: Float | null
+}
+
+export interface NoBondRecordAccountWhereInput {
+  id_eq?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  createdAt_eq?: DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  createdById_eq?: ID_Input | null
+  createdById_in?: ID_Output[] | ID_Output | null
+  updatedAt_eq?: DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  updatedById_eq?: ID_Input | null
+  updatedById_in?: ID_Output[] | ID_Output | null
+  deletedAt_all?: Boolean | null
+  deletedAt_eq?: DateTime | null
+  deletedAt_lt?: DateTime | null
+  deletedAt_lte?: DateTime | null
+  deletedAt_gt?: DateTime | null
+  deletedAt_gte?: DateTime | null
+  deletedById_eq?: ID_Input | null
+  deletedById_in?: ID_Output[] | ID_Output | null
+  firstRewardAt_eq?: Int | null
+  firstRewardAt_gt?: Int | null
+  firstRewardAt_gte?: Int | null
+  firstRewardAt_lt?: Int | null
+  firstRewardAt_lte?: Int | null
+  firstRewardAt_in?: Int[] | Int | null
+  AND?: NoBondRecordAccountWhereInput[] | NoBondRecordAccountWhereInput | null
+  OR?: NoBondRecordAccountWhereInput[] | NoBondRecordAccountWhereInput | null
+}
+
+export interface NoBondRecordAccountWhereUniqueInput {
+  id: ID_Output
+}
+
+export interface StakingRewardCreateInput {
   account: ID_Output
   balance: String
-  timestamp: String
+  date: DateTime
 }
 
-export interface HistoricalBalanceUpdateInput {
+export interface StakingRewardUpdateInput {
   account?: ID_Input | null
   balance?: String | null
-  timestamp?: String | null
+  date?: DateTime | null
 }
 
-export interface HistoricalBalanceWhereInput {
+export interface StakingRewardWhereInput {
   id_eq?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
   createdAt_eq?: DateTime | null
@@ -193,18 +213,143 @@ export interface HistoricalBalanceWhereInput {
   balance_lt?: BigInt | null
   balance_lte?: BigInt | null
   balance_in?: BigInt[] | BigInt | null
-  timestamp_eq?: BigInt | null
-  timestamp_gt?: BigInt | null
-  timestamp_gte?: BigInt | null
-  timestamp_lt?: BigInt | null
-  timestamp_lte?: BigInt | null
-  timestamp_in?: BigInt[] | BigInt | null
-  account?: AccountWhereInput | null
-  AND?: HistoricalBalanceWhereInput[] | HistoricalBalanceWhereInput | null
-  OR?: HistoricalBalanceWhereInput[] | HistoricalBalanceWhereInput | null
+  date_eq?: DateTime | null
+  date_lt?: DateTime | null
+  date_lte?: DateTime | null
+  date_gt?: DateTime | null
+  date_gte?: DateTime | null
+  account?: SumRewardWhereInput | null
+  AND?: StakingRewardWhereInput[] | StakingRewardWhereInput | null
+  OR?: StakingRewardWhereInput[] | StakingRewardWhereInput | null
 }
 
-export interface HistoricalBalanceWhereUniqueInput {
+export interface StakingRewardWhereUniqueInput {
+  id: ID_Output
+}
+
+export interface StakingSlashCreateInput {
+  account: ID_Output
+  balance: String
+  date: DateTime
+}
+
+export interface StakingSlashUpdateInput {
+  account?: ID_Input | null
+  balance?: String | null
+  date?: DateTime | null
+}
+
+export interface StakingSlashWhereInput {
+  id_eq?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  createdAt_eq?: DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  createdById_eq?: ID_Input | null
+  createdById_in?: ID_Output[] | ID_Output | null
+  updatedAt_eq?: DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  updatedById_eq?: ID_Input | null
+  updatedById_in?: ID_Output[] | ID_Output | null
+  deletedAt_all?: Boolean | null
+  deletedAt_eq?: DateTime | null
+  deletedAt_lt?: DateTime | null
+  deletedAt_lte?: DateTime | null
+  deletedAt_gt?: DateTime | null
+  deletedAt_gte?: DateTime | null
+  deletedById_eq?: ID_Input | null
+  deletedById_in?: ID_Output[] | ID_Output | null
+  balance_eq?: BigInt | null
+  balance_gt?: BigInt | null
+  balance_gte?: BigInt | null
+  balance_lt?: BigInt | null
+  balance_lte?: BigInt | null
+  balance_in?: BigInt[] | BigInt | null
+  date_eq?: DateTime | null
+  date_lt?: DateTime | null
+  date_lte?: DateTime | null
+  date_gt?: DateTime | null
+  date_gte?: DateTime | null
+  account?: SumRewardWhereInput | null
+  AND?: StakingSlashWhereInput[] | StakingSlashWhereInput | null
+  OR?: StakingSlashWhereInput[] | StakingSlashWhereInput | null
+}
+
+export interface StakingSlashWhereUniqueInput {
+  id: ID_Output
+}
+
+export interface SumRewardCreateInput {
+  accountReward: String
+  accountSlash: String
+  accountTotal: String
+}
+
+export interface SumRewardUpdateInput {
+  accountReward?: String | null
+  accountSlash?: String | null
+  accountTotal?: String | null
+}
+
+export interface SumRewardWhereInput {
+  id_eq?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  createdAt_eq?: DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  createdById_eq?: ID_Input | null
+  createdById_in?: ID_Output[] | ID_Output | null
+  updatedAt_eq?: DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  updatedById_eq?: ID_Input | null
+  updatedById_in?: ID_Output[] | ID_Output | null
+  deletedAt_all?: Boolean | null
+  deletedAt_eq?: DateTime | null
+  deletedAt_lt?: DateTime | null
+  deletedAt_lte?: DateTime | null
+  deletedAt_gt?: DateTime | null
+  deletedAt_gte?: DateTime | null
+  deletedById_eq?: ID_Input | null
+  deletedById_in?: ID_Output[] | ID_Output | null
+  accountReward_eq?: BigInt | null
+  accountReward_gt?: BigInt | null
+  accountReward_gte?: BigInt | null
+  accountReward_lt?: BigInt | null
+  accountReward_lte?: BigInt | null
+  accountReward_in?: BigInt[] | BigInt | null
+  accountSlash_eq?: BigInt | null
+  accountSlash_gt?: BigInt | null
+  accountSlash_gte?: BigInt | null
+  accountSlash_lt?: BigInt | null
+  accountSlash_lte?: BigInt | null
+  accountSlash_in?: BigInt[] | BigInt | null
+  accountTotal_eq?: BigInt | null
+  accountTotal_gt?: BigInt | null
+  accountTotal_gte?: BigInt | null
+  accountTotal_lt?: BigInt | null
+  accountTotal_lte?: BigInt | null
+  accountTotal_in?: BigInt[] | BigInt | null
+  rewards_none?: StakingRewardWhereInput | null
+  rewards_some?: StakingRewardWhereInput | null
+  rewards_every?: StakingRewardWhereInput | null
+  slashs_none?: StakingSlashWhereInput | null
+  slashs_some?: StakingSlashWhereInput | null
+  slashs_every?: StakingSlashWhereInput | null
+  AND?: SumRewardWhereInput[] | SumRewardWhereInput | null
+  OR?: SumRewardWhereInput[] | SumRewardWhereInput | null
+}
+
+export interface SumRewardWhereUniqueInput {
   id: ID_Output
 }
 
@@ -221,31 +366,6 @@ export interface BaseGraphQLObject {
 
 export interface DeleteResponse {
   id: ID_Output
-}
-
-export interface Account extends BaseGraphQLObject {
-  id: ID_Output
-  createdAt: DateTime
-  createdById: String
-  updatedAt?: DateTime | null
-  updatedById?: String | null
-  deletedAt?: DateTime | null
-  deletedById?: String | null
-  version: Int
-  wallet: String
-  balance: BigInt
-  historicalBalances: Array<HistoricalBalance>
-}
-
-export interface AccountConnection {
-  totalCount: Int
-  edges: Array<AccountEdge>
-  pageInfo: PageInfo
-}
-
-export interface AccountEdge {
-  node: Account
-  cursor: String
 }
 
 export interface BaseModel extends BaseGraphQLObject {
@@ -274,7 +394,7 @@ export interface Hello {
   greeting: String
 }
 
-export interface HistoricalBalance extends BaseGraphQLObject {
+export interface NoBondRecordAccount extends BaseGraphQLObject {
   id: ID_Output
   createdAt: DateTime
   createdById: String
@@ -283,20 +403,17 @@ export interface HistoricalBalance extends BaseGraphQLObject {
   deletedAt?: DateTime | null
   deletedById?: String | null
   version: Int
-  account: Account
-  accountId: String
-  balance: BigInt
-  timestamp: BigInt
+  firstRewardAt: Int
 }
 
-export interface HistoricalBalanceConnection {
+export interface NoBondRecordAccountConnection {
   totalCount: Int
-  edges: Array<HistoricalBalanceEdge>
+  edges: Array<NoBondRecordAccountEdge>
   pageInfo: PageInfo
 }
 
-export interface HistoricalBalanceEdge {
-  node: HistoricalBalance
+export interface NoBondRecordAccountEdge {
+  node: NoBondRecordAccount
   cursor: String
 }
 
@@ -314,8 +431,87 @@ export interface ProcessorState {
   chainHead: Float
 }
 
+export interface StakingReward extends BaseGraphQLObject {
+  id: ID_Output
+  createdAt: DateTime
+  createdById: String
+  updatedAt?: DateTime | null
+  updatedById?: String | null
+  deletedAt?: DateTime | null
+  deletedById?: String | null
+  version: Int
+  account: SumReward
+  accountId: String
+  balance: BigInt
+  date: DateTime
+}
+
+export interface StakingRewardConnection {
+  totalCount: Int
+  edges: Array<StakingRewardEdge>
+  pageInfo: PageInfo
+}
+
+export interface StakingRewardEdge {
+  node: StakingReward
+  cursor: String
+}
+
+export interface StakingSlash extends BaseGraphQLObject {
+  id: ID_Output
+  createdAt: DateTime
+  createdById: String
+  updatedAt?: DateTime | null
+  updatedById?: String | null
+  deletedAt?: DateTime | null
+  deletedById?: String | null
+  version: Int
+  account: SumReward
+  accountId: String
+  balance: BigInt
+  date: DateTime
+}
+
+export interface StakingSlashConnection {
+  totalCount: Int
+  edges: Array<StakingSlashEdge>
+  pageInfo: PageInfo
+}
+
+export interface StakingSlashEdge {
+  node: StakingSlash
+  cursor: String
+}
+
 export interface StandardDeleteResponse {
   id: ID_Output
+}
+
+export interface SumReward extends BaseGraphQLObject {
+  id: ID_Output
+  createdAt: DateTime
+  createdById: String
+  updatedAt?: DateTime | null
+  updatedById?: String | null
+  deletedAt?: DateTime | null
+  deletedById?: String | null
+  version: Int
+  accountReward: BigInt
+  accountSlash: BigInt
+  accountTotal: BigInt
+  rewards?: Array<StakingReward> | null
+  slashs?: Array<StakingSlash> | null
+}
+
+export interface SumRewardConnection {
+  totalCount: Int
+  edges: Array<SumRewardEdge>
+  pageInfo: PageInfo
+}
+
+export interface SumRewardEdge {
+  node: SumReward
+  cursor: String
 }
 
 /*

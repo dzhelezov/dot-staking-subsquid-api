@@ -3,22 +3,22 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { WhereInput, HydraBaseService } from '@subsquid/warthog';
 
-import { HistoricalBalance } from './historical-balance.model';
+import { StakingReward } from './staking-reward.model';
 
-import { HistoricalBalanceWhereArgs, HistoricalBalanceWhereInput } from '../../warthog';
+import { StakingRewardWhereArgs, StakingRewardWhereInput } from '../../warthog';
 
-import { Account } from '../account/account.model';
-import { AccountService } from '../account/account.service';
+import { SumReward } from '../sum-reward/sum-reward.model';
+import { SumRewardService } from '../sum-reward/sum-reward.service';
 import { getConnection, getRepository, In, Not } from 'typeorm';
 import _ from 'lodash';
 
-@Service('HistoricalBalanceService')
-export class HistoricalBalanceService extends HydraBaseService<HistoricalBalance> {
-  @Inject('AccountService')
-  public readonly accountService!: AccountService;
+@Service('StakingRewardService')
+export class StakingRewardService extends HydraBaseService<StakingReward> {
+  @Inject('SumRewardService')
+  public readonly accountService!: SumRewardService;
 
-  constructor(@InjectRepository(HistoricalBalance) protected readonly repository: Repository<HistoricalBalance>) {
-    super(HistoricalBalance, repository);
+  constructor(@InjectRepository(StakingReward) protected readonly repository: Repository<StakingReward>) {
+    super(StakingReward, repository);
   }
 
   async find<W extends WhereInput>(
@@ -27,7 +27,7 @@ export class HistoricalBalanceService extends HydraBaseService<HistoricalBalance
     limit?: number,
     offset?: number,
     fields?: string[]
-  ): Promise<HistoricalBalance[]> {
+  ): Promise<StakingReward[]> {
     return this.findWithRelations<W>(where, orderBy, limit, offset, fields);
   }
 
@@ -37,7 +37,7 @@ export class HistoricalBalanceService extends HydraBaseService<HistoricalBalance
     limit?: number,
     offset?: number,
     fields?: string[]
-  ): Promise<HistoricalBalance[]> {
+  ): Promise<StakingReward[]> {
     return this.buildFindWithRelationsQuery(_where, orderBy, limit, offset, fields).getMany();
   }
 
@@ -47,8 +47,8 @@ export class HistoricalBalanceService extends HydraBaseService<HistoricalBalance
     limit?: number,
     offset?: number,
     fields?: string[]
-  ): SelectQueryBuilder<HistoricalBalance> {
-    const where = <HistoricalBalanceWhereInput>(_where || {});
+  ): SelectQueryBuilder<StakingReward> {
+    const where = <StakingRewardWhereInput>(_where || {});
 
     // remove relation filters to enable warthog query builders
     const { account } = where;
@@ -64,7 +64,7 @@ export class HistoricalBalanceService extends HydraBaseService<HistoricalBalance
         .buildFindQueryWithParams(<any>account, undefined, undefined, ['id'], 'account')
         .take(undefined); // remove the default LIMIT
 
-      mainQuery = mainQuery.andWhere(`"historicalbalance"."account_id" IN (${accountQuery.getQuery()})`);
+      mainQuery = mainQuery.andWhere(`"stakingreward"."account_id" IN (${accountQuery.getQuery()})`);
 
       parameters = { ...parameters, ...accountQuery.getParameters() };
     }

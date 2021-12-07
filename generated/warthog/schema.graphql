@@ -1,98 +1,3 @@
-type Account implements BaseGraphQLObject {
-  id: ID!
-  createdAt: DateTime!
-  createdById: String!
-  updatedAt: DateTime
-  updatedById: String
-  deletedAt: DateTime
-  deletedById: String
-  version: Int!
-  wallet: String!
-  balance: BigInt!
-  historicalBalances: [HistoricalBalance!]!
-}
-
-type AccountConnection {
-  totalCount: Int!
-  edges: [AccountEdge!]!
-  pageInfo: PageInfo!
-}
-
-input AccountCreateInput {
-  wallet: String!
-  balance: String!
-}
-
-type AccountEdge {
-  node: Account!
-  cursor: String!
-}
-
-enum AccountOrderByInput {
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  deletedAt_ASC
-  deletedAt_DESC
-  wallet_ASC
-  wallet_DESC
-  balance_ASC
-  balance_DESC
-}
-
-input AccountUpdateInput {
-  wallet: String
-  balance: String
-}
-
-input AccountWhereInput {
-  id_eq: ID
-  id_in: [ID!]
-  createdAt_eq: DateTime
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  createdById_eq: ID
-  createdById_in: [ID!]
-  updatedAt_eq: DateTime
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  updatedById_eq: ID
-  updatedById_in: [ID!]
-  deletedAt_all: Boolean
-  deletedAt_eq: DateTime
-  deletedAt_lt: DateTime
-  deletedAt_lte: DateTime
-  deletedAt_gt: DateTime
-  deletedAt_gte: DateTime
-  deletedById_eq: ID
-  deletedById_in: [ID!]
-  wallet_eq: String
-  wallet_contains: String
-  wallet_startsWith: String
-  wallet_endsWith: String
-  wallet_in: [String!]
-  balance_eq: BigInt
-  balance_gt: BigInt
-  balance_gte: BigInt
-  balance_lt: BigInt
-  balance_lte: BigInt
-  balance_in: [BigInt!]
-  historicalBalances_none: HistoricalBalanceWhereInput
-  historicalBalances_some: HistoricalBalanceWhereInput
-  historicalBalances_every: HistoricalBalanceWhereInput
-  AND: [AccountWhereInput!]
-  OR: [AccountWhereInput!]
-}
-
-input AccountWhereUniqueInput {
-  id: ID!
-}
-
 interface BaseGraphQLObject {
   id: ID!
   createdAt: DateTime!
@@ -166,7 +71,7 @@ type Hello {
   greeting: String!
 }
 
-type HistoricalBalance implements BaseGraphQLObject {
+type NoBondRecordAccount implements BaseGraphQLObject {
   id: ID!
   createdAt: DateTime!
   createdById: String!
@@ -175,30 +80,141 @@ type HistoricalBalance implements BaseGraphQLObject {
   deletedAt: DateTime
   deletedById: String
   version: Int!
-  account: Account!
-  accountId: String!
-  balance: BigInt!
-  timestamp: BigInt!
+  firstRewardAt: Int!
 }
 
-type HistoricalBalanceConnection {
+type NoBondRecordAccountConnection {
   totalCount: Int!
-  edges: [HistoricalBalanceEdge!]!
+  edges: [NoBondRecordAccountEdge!]!
   pageInfo: PageInfo!
 }
 
-input HistoricalBalanceCreateInput {
-  account: ID!
-  balance: String!
-  timestamp: String!
+input NoBondRecordAccountCreateInput {
+  firstRewardAt: Float!
 }
 
-type HistoricalBalanceEdge {
-  node: HistoricalBalance!
+type NoBondRecordAccountEdge {
+  node: NoBondRecordAccount!
   cursor: String!
 }
 
-enum HistoricalBalanceOrderByInput {
+enum NoBondRecordAccountOrderByInput {
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  deletedAt_ASC
+  deletedAt_DESC
+  firstRewardAt_ASC
+  firstRewardAt_DESC
+}
+
+input NoBondRecordAccountUpdateInput {
+  firstRewardAt: Float
+}
+
+input NoBondRecordAccountWhereInput {
+  id_eq: ID
+  id_in: [ID!]
+  createdAt_eq: DateTime
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  createdById_eq: ID
+  createdById_in: [ID!]
+  updatedAt_eq: DateTime
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  updatedById_eq: ID
+  updatedById_in: [ID!]
+  deletedAt_all: Boolean
+  deletedAt_eq: DateTime
+  deletedAt_lt: DateTime
+  deletedAt_lte: DateTime
+  deletedAt_gt: DateTime
+  deletedAt_gte: DateTime
+  deletedById_eq: ID
+  deletedById_in: [ID!]
+  firstRewardAt_eq: Int
+  firstRewardAt_gt: Int
+  firstRewardAt_gte: Int
+  firstRewardAt_lt: Int
+  firstRewardAt_lte: Int
+  firstRewardAt_in: [Int!]
+  AND: [NoBondRecordAccountWhereInput!]
+  OR: [NoBondRecordAccountWhereInput!]
+}
+
+input NoBondRecordAccountWhereUniqueInput {
+  id: ID!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type ProcessorState {
+  lastCompleteBlock: Float!
+  lastProcessedEvent: String!
+  indexerHead: Float!
+  chainHead: Float!
+}
+
+type Query {
+  noBondRecordAccounts(offset: Int, limit: Int = 50, where: NoBondRecordAccountWhereInput, orderBy: [NoBondRecordAccountOrderByInput!]): [NoBondRecordAccount!]!
+  noBondRecordAccountByUniqueInput(where: NoBondRecordAccountWhereUniqueInput!): NoBondRecordAccount
+  noBondRecordAccountsConnection(first: Int, after: String, last: Int, before: String, where: NoBondRecordAccountWhereInput, orderBy: [NoBondRecordAccountOrderByInput!]): NoBondRecordAccountConnection!
+  stakingRewards(offset: Int, limit: Int = 50, where: StakingRewardWhereInput, orderBy: [StakingRewardOrderByInput!]): [StakingReward!]!
+  stakingRewardByUniqueInput(where: StakingRewardWhereUniqueInput!): StakingReward
+  stakingRewardsConnection(first: Int, after: String, last: Int, before: String, where: StakingRewardWhereInput, orderBy: [StakingRewardOrderByInput!]): StakingRewardConnection!
+  stakingSlashes(offset: Int, limit: Int = 50, where: StakingSlashWhereInput, orderBy: [StakingSlashOrderByInput!]): [StakingSlash!]!
+  stakingSlashByUniqueInput(where: StakingSlashWhereUniqueInput!): StakingSlash
+  stakingSlashesConnection(first: Int, after: String, last: Int, before: String, where: StakingSlashWhereInput, orderBy: [StakingSlashOrderByInput!]): StakingSlashConnection!
+  sumRewards(offset: Int, limit: Int = 50, where: SumRewardWhereInput, orderBy: [SumRewardOrderByInput!]): [SumReward!]!
+  sumRewardByUniqueInput(where: SumRewardWhereUniqueInput!): SumReward
+  sumRewardsConnection(first: Int, after: String, last: Int, before: String, where: SumRewardWhereInput, orderBy: [SumRewardOrderByInput!]): SumRewardConnection!
+  hello: Hello!
+}
+
+type StakingReward implements BaseGraphQLObject {
+  id: ID!
+  createdAt: DateTime!
+  createdById: String!
+  updatedAt: DateTime
+  updatedById: String
+  deletedAt: DateTime
+  deletedById: String
+  version: Int!
+  account: SumReward!
+  accountId: String!
+  balance: BigInt!
+  date: DateTime!
+}
+
+type StakingRewardConnection {
+  totalCount: Int!
+  edges: [StakingRewardEdge!]!
+  pageInfo: PageInfo!
+}
+
+input StakingRewardCreateInput {
+  account: ID!
+  balance: String!
+  date: DateTime!
+}
+
+type StakingRewardEdge {
+  node: StakingReward!
+  cursor: String!
+}
+
+enum StakingRewardOrderByInput {
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -209,17 +225,17 @@ enum HistoricalBalanceOrderByInput {
   account_DESC
   balance_ASC
   balance_DESC
-  timestamp_ASC
-  timestamp_DESC
+  date_ASC
+  date_DESC
 }
 
-input HistoricalBalanceUpdateInput {
+input StakingRewardUpdateInput {
   account: ID
   balance: String
-  timestamp: String
+  date: DateTime
 }
 
-input HistoricalBalanceWhereInput {
+input StakingRewardWhereInput {
   id_eq: ID
   id_in: [ID!]
   createdAt_eq: DateTime
@@ -250,43 +266,116 @@ input HistoricalBalanceWhereInput {
   balance_lt: BigInt
   balance_lte: BigInt
   balance_in: [BigInt!]
-  timestamp_eq: BigInt
-  timestamp_gt: BigInt
-  timestamp_gte: BigInt
-  timestamp_lt: BigInt
-  timestamp_lte: BigInt
-  timestamp_in: [BigInt!]
-  account: AccountWhereInput
-  AND: [HistoricalBalanceWhereInput!]
-  OR: [HistoricalBalanceWhereInput!]
+  date_eq: DateTime
+  date_lt: DateTime
+  date_lte: DateTime
+  date_gt: DateTime
+  date_gte: DateTime
+  account: SumRewardWhereInput
+  AND: [StakingRewardWhereInput!]
+  OR: [StakingRewardWhereInput!]
 }
 
-input HistoricalBalanceWhereUniqueInput {
+input StakingRewardWhereUniqueInput {
   id: ID!
 }
 
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-  endCursor: String
+type StakingSlash implements BaseGraphQLObject {
+  id: ID!
+  createdAt: DateTime!
+  createdById: String!
+  updatedAt: DateTime
+  updatedById: String
+  deletedAt: DateTime
+  deletedById: String
+  version: Int!
+  account: SumReward!
+  accountId: String!
+  balance: BigInt!
+  date: DateTime!
 }
 
-type ProcessorState {
-  lastCompleteBlock: Float!
-  lastProcessedEvent: String!
-  indexerHead: Float!
-  chainHead: Float!
+type StakingSlashConnection {
+  totalCount: Int!
+  edges: [StakingSlashEdge!]!
+  pageInfo: PageInfo!
 }
 
-type Query {
-  accounts(offset: Int, limit: Int = 50, where: AccountWhereInput, orderBy: [AccountOrderByInput!]): [Account!]!
-  accountByUniqueInput(where: AccountWhereUniqueInput!): Account
-  accountsConnection(first: Int, after: String, last: Int, before: String, where: AccountWhereInput, orderBy: [AccountOrderByInput!]): AccountConnection!
-  historicalBalances(offset: Int, limit: Int = 50, where: HistoricalBalanceWhereInput, orderBy: [HistoricalBalanceOrderByInput!]): [HistoricalBalance!]!
-  historicalBalanceByUniqueInput(where: HistoricalBalanceWhereUniqueInput!): HistoricalBalance
-  historicalBalancesConnection(first: Int, after: String, last: Int, before: String, where: HistoricalBalanceWhereInput, orderBy: [HistoricalBalanceOrderByInput!]): HistoricalBalanceConnection!
-  hello: Hello!
+input StakingSlashCreateInput {
+  account: ID!
+  balance: String!
+  date: DateTime!
+}
+
+type StakingSlashEdge {
+  node: StakingSlash!
+  cursor: String!
+}
+
+enum StakingSlashOrderByInput {
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  deletedAt_ASC
+  deletedAt_DESC
+  account_ASC
+  account_DESC
+  balance_ASC
+  balance_DESC
+  date_ASC
+  date_DESC
+}
+
+input StakingSlashUpdateInput {
+  account: ID
+  balance: String
+  date: DateTime
+}
+
+input StakingSlashWhereInput {
+  id_eq: ID
+  id_in: [ID!]
+  createdAt_eq: DateTime
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  createdById_eq: ID
+  createdById_in: [ID!]
+  updatedAt_eq: DateTime
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  updatedById_eq: ID
+  updatedById_in: [ID!]
+  deletedAt_all: Boolean
+  deletedAt_eq: DateTime
+  deletedAt_lt: DateTime
+  deletedAt_lte: DateTime
+  deletedAt_gt: DateTime
+  deletedAt_gte: DateTime
+  deletedById_eq: ID
+  deletedById_in: [ID!]
+  balance_eq: BigInt
+  balance_gt: BigInt
+  balance_gte: BigInt
+  balance_lt: BigInt
+  balance_lte: BigInt
+  balance_in: [BigInt!]
+  date_eq: DateTime
+  date_lt: DateTime
+  date_lte: DateTime
+  date_gt: DateTime
+  date_gte: DateTime
+  account: SumRewardWhereInput
+  AND: [StakingSlashWhereInput!]
+  OR: [StakingSlashWhereInput!]
+}
+
+input StakingSlashWhereUniqueInput {
+  id: ID!
 }
 
 type StandardDeleteResponse {
@@ -295,4 +384,115 @@ type StandardDeleteResponse {
 
 type Subscription {
   stateSubscription: ProcessorState!
+}
+
+type SumReward implements BaseGraphQLObject {
+  id: ID!
+  createdAt: DateTime!
+  createdById: String!
+  updatedAt: DateTime
+  updatedById: String
+  deletedAt: DateTime
+  deletedById: String
+  version: Int!
+  accountReward: BigInt!
+  accountSlash: BigInt!
+  accountTotal: BigInt!
+  rewards: [StakingReward!]
+  slashs: [StakingSlash!]
+}
+
+type SumRewardConnection {
+  totalCount: Int!
+  edges: [SumRewardEdge!]!
+  pageInfo: PageInfo!
+}
+
+input SumRewardCreateInput {
+  accountReward: String!
+  accountSlash: String!
+  accountTotal: String!
+}
+
+type SumRewardEdge {
+  node: SumReward!
+  cursor: String!
+}
+
+enum SumRewardOrderByInput {
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  deletedAt_ASC
+  deletedAt_DESC
+  accountReward_ASC
+  accountReward_DESC
+  accountSlash_ASC
+  accountSlash_DESC
+  accountTotal_ASC
+  accountTotal_DESC
+}
+
+input SumRewardUpdateInput {
+  accountReward: String
+  accountSlash: String
+  accountTotal: String
+}
+
+input SumRewardWhereInput {
+  id_eq: ID
+  id_in: [ID!]
+  createdAt_eq: DateTime
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  createdById_eq: ID
+  createdById_in: [ID!]
+  updatedAt_eq: DateTime
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  updatedById_eq: ID
+  updatedById_in: [ID!]
+  deletedAt_all: Boolean
+  deletedAt_eq: DateTime
+  deletedAt_lt: DateTime
+  deletedAt_lte: DateTime
+  deletedAt_gt: DateTime
+  deletedAt_gte: DateTime
+  deletedById_eq: ID
+  deletedById_in: [ID!]
+  accountReward_eq: BigInt
+  accountReward_gt: BigInt
+  accountReward_gte: BigInt
+  accountReward_lt: BigInt
+  accountReward_lte: BigInt
+  accountReward_in: [BigInt!]
+  accountSlash_eq: BigInt
+  accountSlash_gt: BigInt
+  accountSlash_gte: BigInt
+  accountSlash_lt: BigInt
+  accountSlash_lte: BigInt
+  accountSlash_in: [BigInt!]
+  accountTotal_eq: BigInt
+  accountTotal_gt: BigInt
+  accountTotal_gte: BigInt
+  accountTotal_lt: BigInt
+  accountTotal_lte: BigInt
+  accountTotal_in: [BigInt!]
+  rewards_none: StakingRewardWhereInput
+  rewards_some: StakingRewardWhereInput
+  rewards_every: StakingRewardWhereInput
+  slashs_none: StakingSlashWhereInput
+  slashs_some: StakingSlashWhereInput
+  slashs_every: StakingSlashWhereInput
+  AND: [SumRewardWhereInput!]
+  OR: [SumRewardWhereInput!]
+}
+
+input SumRewardWhereUniqueInput {
+  id: ID!
 }

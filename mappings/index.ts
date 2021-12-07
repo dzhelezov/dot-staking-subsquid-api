@@ -1,45 +1,90 @@
 import BN from 'bn.js'
 import { DatabaseManager, EventContext, StoreContext } from '@subsquid/hydra-common'
-import { Account, HistoricalBalance } from '../generated/model'
-import { Balances } from '../chain'
+import { NoBondRecordAccount, StakingReward, StakingSlash, SumReward } from '../generated/model'
+import { Staking } from '../chain'
 
-
-export async function balancesTransfer({
+export async function handleBond({
   store,
   event,
   block,
-  extrinsic,
+  extrinsic
 }: EventContext & StoreContext): Promise<void> {
+  const [accountID, balance] = new Staking.BondedEvent(event).params
 
-  const [from, to, value] = new Balances.TransferEvent(event).params
-  const tip = extrinsic ? new BN(extrinsic.tip.toString(10)) : new BN(0)
+  let sumReward = await getOrCreate(store, SumReward, accountID.toHex())
 
-  const fromAcc = await getOrCreate(store, Account, from.toHex())
-  fromAcc.wallet = from.toHuman()
-  fromAcc.balance = fromAcc.balance || new BN(0)
-  fromAcc.balance = fromAcc.balance.sub(value)
-  fromAcc.balance = fromAcc.balance.sub(tip)
-  await store.save(fromAcc)
+  sumReward.accountReward = new BN(0)
+  sumReward.accountSlash = new BN(0)
+  sumReward.accountTotal = new BN(0)
 
-  const toAcc = await getOrCreate(store, Account, to.toHex())
-  toAcc.wallet = to.toHuman()
-  toAcc.balance = toAcc.balance || new BN(0)
-  toAcc.balance = toAcc.balance.add(value)
-  await store.save(toAcc)
-
-  const hbFrom = new HistoricalBalance()
-  hbFrom.account = fromAcc;
-  hbFrom.balance = fromAcc.balance;
-  hbFrom.timestamp = new BN(block.timestamp)
-  await store.save(hbFrom)
-
-  const hbTo = new HistoricalBalance()
-  hbTo.account = toAcc;
-  hbTo.balance = toAcc.balance;
-  hbTo.timestamp = new BN(block.timestamp)
-  await store.save(hbTo)
+  await store.save(sumReward)
 }
 
+export async function handleReward({
+  store,
+  event,
+  block,
+  extrinsic
+}: EventContext & StoreContext): Promise<void> {
+  const [accountID, newReward] = new Staking.RewardEvent(event).params
+
+  let sumReward = await getOrCreate(store, SumReward, accountID.toHex())
+
+  sumReward.accountReward = sumReward.accountReward.add(newReward)
+  sumReward.accountTotal = sumReward.accountTotal.sub(sumReward.accountSlash)
+
+  await store.save(sumReward)
+}
+
+export async function handleSlash({
+  store,
+  event,
+  block,
+  extrinsic
+}: EventContext & StoreContext): Promise<void> {
+  const [accountID, newSlash] = new Staking.SlashEvent(event).params
+
+  let sumReward = await getOrCreate(store, SumReward, accountID.toHex())
+
+  sumReward.accountSlash = sumReward.accountSlash.add(newSlash)
+  sumReward.accountTotal = sumReward.accountTotal.sub(sumReward.accountSlash)
+
+  await store.save(sumReward)
+}
+
+export async function handleStakingReward({
+  store,
+  event,
+  block,
+  extrinsic
+}: EventContext & StoreContext): Promise<void> {
+  const [accountID, balance] = new Staking.RewardEvent(event).params
+
+  let reward = await getOrCreate(store, StakingReward, `${event.blockNumber}-${event.id}`)
+
+  reward.account = await getOrCreate(store, SumReward, accountID.toHex())
+  reward.balance = balance
+  reward.date = new Date(block.timestamp)
+  
+  await store.save(reward)
+}
+
+export async function handleStakingSlash({
+  store,
+  event,
+  block,
+  extrinsic
+}: EventContext & StoreContext): Promise<void> {
+  const [accountID, balance] = new Staking.SlashEvent(event).params
+
+  let slash = await getOrCreate(store, StakingSlash, `${event.blockNumber}-${event.id}`)
+
+  slash.account = await getOrCreate(store, SumReward, accountID.toHex())
+  slash.balance = balance
+  slash.date = new Date(block.timestamp)
+
+  await store.save(slash)
+}
 
 async function getOrCreate<T extends {id: string}>(
   store: DatabaseManager,

@@ -3,5 +3,5 @@ const typeRegistry = new TypeRegistry();
 
 export { typeRegistry };
 
-export * from "./balances";
+export * from "./staking";
 export * from "./timestamp";

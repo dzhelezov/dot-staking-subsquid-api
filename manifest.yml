@@ -5,9 +5,12 @@ hydraVersion: ">=4"
 
 typegen:
   metadata:
-    source: wss://kusama-rpc.polkadot.io/
+    source: wss://rpc.polkadot.io/
+    blockHash: '0x85b133210631562ef26d3cb1a0781396ab13fa5e2118a74c4f8ed59c6cf8c9ab'
   events:
-    - balances.Transfer
+    - staking.Bonded
+    - staking.Reward
+    - staking.Slash
   calls:
     - timestamp.set
   outDir: chain
@@ -15,8 +18,16 @@ typegen:
 mappings:
   mappingsModule: mappings
   eventHandlers:
-    - event: balances.Transfer
-      handler: balancesTransfer
+    - event: staking.Bonded
+      handler: handleBond
+    - event: staking.Reward
+      handler: handleReward
+    - event: staking.Slash
+      handler: handleSlash
+    - event: staking.Reward
+      handler: handleStakingReward
+    - event: staking.Slash
+      handler: handleStakingSlash
   extrinsicHandlers:
   preBlockHooks:
   postBlockHooks:
