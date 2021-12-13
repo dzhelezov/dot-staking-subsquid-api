@@ -31,7 +31,7 @@ export async function handleReward({
   let sumReward = await getOrCreate(store, SumReward, accountID.toHex())
 
   sumReward.accountReward = sumReward.accountReward.add(newReward)
-  sumReward.accountTotal = sumReward.accountTotal.sub(sumReward.accountSlash)
+  sumReward.accountTotal = sumReward.accountTotal.add(sumReward.accountReward)
 
   await store.save(sumReward)
 }
@@ -62,9 +62,15 @@ export async function handleStakingReward({
 
   let reward = await getOrCreate(store, StakingReward, `${event.blockNumber}-${event.id}`)
 
-  reward.account = await getOrCreate(store, SumReward, accountID.toHex())
+  let sumReward = await getOrCreate(store, SumReward, accountID.toHex())
+  reward.account = sumReward
   reward.balance = balance
   reward.date = new Date(block.timestamp)
+
+  sumReward.accountReward = sumReward.accountReward.add(balance)
+  sumReward.accountTotal = sumReward.accountTotal.add(balance)
+
+  await store.save(sumReward)
   
   await store.save(reward)
 }
@@ -79,9 +85,15 @@ export async function handleStakingSlash({
 
   let slash = await getOrCreate(store, StakingSlash, `${event.blockNumber}-${event.id}`)
 
-  slash.account = await getOrCreate(store, SumReward, accountID.toHex())
+  let sumReward = await getOrCreate(store, SumReward, accountID.toHex())
+  slash.account = sumReward
   slash.balance = balance
   slash.date = new Date(block.timestamp)
+
+  sumReward.accountSlash = sumReward.accountSlash.add(balance)
+  sumReward.accountTotal = sumReward.accountTotal.sub(sumReward.accountSlash)
+
+  await store.save(sumReward)
 
   await store.save(slash)
 }

@@ -21,10 +21,6 @@ mappings:
     - event: staking.Bonded
       handler: handleBond
     - event: staking.Reward
-      handler: handleReward
-    - event: staking.Slash
-      handler: handleSlash
-    - event: staking.Reward
       handler: handleStakingReward
     - event: staking.Slash
       handler: handleStakingSlash
